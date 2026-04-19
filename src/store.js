@@ -16,10 +16,10 @@ export default function storeReducer(state, action) {
         case "SET_VEHICULOS":
             return { ...state, vehiculos: action.payload };
         case "ADD_FAVORITE":
-            if (state.favorites.some(fav => fav.name === action.payload.name)) return state;
+            if (state.favorites.some(fav => fav.uid === action.payload.uid)) return state;
             return { ...state, favorites: [...state.favorites, action.payload] };
         case "REMOVE_FAVORITE":
-            return { ...state, favorites: state.favorites.filter(fav => fav.name !== action.payload) };
+            return { ...state, favorites: state.favorites.filter(fav => fav.uid !== action.payload) };
         default:
             return state;
     }

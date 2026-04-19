@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-export const PersonajeDetalle = () => {
+export const PlanetaDetalle = () => {
     const { uid } = useParams();
     const navigate = useNavigate();
     const [detalles, setDetalles] = useState(null);
@@ -9,24 +9,25 @@ export const PersonajeDetalle = () => {
     const cleanUid = uid.trim();
 
     useEffect(() => {
-        fetch(`https://akabab.github.io/starwars-api/api/id/${cleanUid}.json`)
+        fetch(`https://raw.githubusercontent.com/tbone849/star-wars-guide/master/build/assets/img/planets/${cleanUid}`)
             .then(res => res.json())
             .then(data => {
-                setDetalles(data);
+                if (data.result) setDetalles(data.result.properties);
             })
-            .catch(err => console.error("Error cargando detalles:", err));
+            .catch(err => console.error(err));
     }, [cleanUid]);
 
-    if (!detalles) return <p className="text-white text-center mt-5">Cargando detalles del héroe...</p>;
+    if (!detalles) return <p className="text-white text-center mt-5">Cargando coordenadas espaciales...</p>;
 
     return (
         <div className="container mt-5">
             <div className="mb-4">
-                <button
-                    onClick={() => navigate("/personajes")}
+                <button 
+                    onClick={() => navigate("/planetas")}
                     className="btn btn-outline-warning"
                 >
-                    <i className="fa-solid fa-arrow-left me-2"></i> Regresar
+                    <i className="fa-solid fa-arrow-left me-2"></i>
+                    Regresar
                 </button>
             </div>
 
@@ -38,24 +39,24 @@ export const PersonajeDetalle = () => {
                         alt={detalles.name}
                         style={{ maxHeight: "500px", objectFit: "cover" }}
                         onError={(e) => {
-                            e.target.src = "https://placehold.co/400x600/212529/ffe81f?text=Imagen+No+Disponible";
+                            e.target.src = "https://placehold.co/400x600/212529/ffe81f?text=Planeta+No+Disponible";
                         }}
                     />
                 </div>
                 <div className="col-md-6 text-white p-4">
                     <h1 className="display-4 text-warning">{detalles.name}</h1>
                     <hr className="bg-warning" style={{ height: "2px" }} />
-
+            
                     <div className="mt-4 fs-5">
-                        <p className="mb-3"><strong>Especie:</strong> <span className="text-capitalize">{detalles.species}</span></p>
-                        <p className="mb-3"><strong>Altura:</strong> {detalles.height} m</p>
-                        <p className="mb-3"><strong>Color de cabello:</strong> <span className="text-capitalize">{detalles.hairColor || "No tiene"}</span></p>
-                        <p className="mb-3"><strong>Planeta de origen:</strong> <span className="text-capitalize">{detalles.homeworld}</span></p>
+                        <p className="mb-3"><strong>Clima:</strong> {detalles.climate}</p>
+                        <p className="mb-3"><strong>Terreno:</strong> {detalles.terrain}</p>
+                        <p className="mb-3"><strong>Población:</strong> {detalles.population}</p>
+                        <p className="mb-3"><strong>Período Orbital:</strong> {detalles.orbital_period} días</p>
                     </div>
 
                     <div className="mt-5 p-3 bg-secondary bg-opacity-25 rounded">
                         <p className="fst-italic text-info">
-                            "Los datos mostrados han sido extraídos directamente de los Archivos de la Antigua República."
+                            "Datos topográficos y demográficos recopilados por sondas de reconocimiento."
                         </p>
                     </div>
                 </div>

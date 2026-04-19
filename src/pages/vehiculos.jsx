@@ -1,68 +1,90 @@
+import { useEffect } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { Link } from "react-router-dom";
 
 export const Vehiculos = () => {
+    const { store, dispatch } = useGlobalReducer();
 
-    const { store, dispatch } = useGlobalReducer()
+    useEffect(() => {
+        if (store.vehiculos && store.vehiculos.length > 0) return;
+
+        const fetchVehiculos = async () => {
+            try {
+                const response = await fetch("https://swapi.info/api/vehicles");
+                if (!response.ok) throw new Error("Error cargando vehículos");
+                const data = await response.json();
+
+                const vehiculosAdaptados = data.map(v => {
+                    const id = v.url.split("/").filter(Boolean).pop();
+                    return { ...v, uid: id };
+                });
+
+                dispatch({
+                    type: "SET_VEHICULOS",
+                    payload: vehiculosAdaptados
+                });
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        };
+
+        fetchVehiculos();
+    }, [store.vehiculos?.length, dispatch]);
 
     return (
-        <div className="container">
-        <div className="row row-cols-1 row-cols-md-2 g-4">
-            <div className="col">
-                <div className="card">
-                    <img src="..." className="card-img-top" alt="..." />
-                    <div className="card-body">
-                        <h5 className="card-title">Card title</h5>
-                        <p className="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+        <div className="container mt-4">
+            <h1 className="text-warning mb-4 text-center">Vehículos</h1>
+
+            {!store.vehiculos || store.vehiculos.length === 0 ? (
+                <div className="d-flex justify-content-center mt-5">
+                    <div className="spinner-border text-warning" role="status">
+                        <span className="visually-hidden">Cargando...</span>
                     </div>
                 </div>
-            </div>
-            <div className="col">
-                <div className="card">
-                    <img src="..." className="card-img-top" alt="..." />
-                    <div className="card-body">
-                        <h5 className="card-title">Card title</h5>
-                        <p className="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                    </div>
+            ) : (
+                <div className="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+                    {store.vehiculos.map(item => {
+                        const imageUrl = `https://raw.githubusercontent.com/tbone849/star-wars-guide/master/build/assets/img/vehicles/${item.uid}.jpg`;
+                        const isFavorite = store.favorites.some(fav => fav.uid === item.uid);
+
+                        return (
+                            <div key={item.uid} className="col d-flex justify-content-center">
+                                <div className="card bg-dark text-white border-secondary shadow-sm w-100" style={{ maxWidth: "18rem" }}>
+                                    <img
+                                        src={imageUrl}
+                                        className="card-img-top"
+                                        alt={item.name}
+                                        style={{ height: "300px", objectFit: "cover", objectPosition: "center" }}
+                                        onError={(e) => {
+                                            e.target.src = "https://placehold.co/400x600/212529/ffe81f?text=Imagen+No+Disponible";
+                                        }}
+                                    />
+                                    <div className="card-body d-flex flex-column">
+                                        <h5 className="card-title text-warning">{item.name}</h5>
+                                        <div className="mt-auto d-flex justify-content-between">
+                                            <Link to={`/vehiculos/${item.uid}`} className="btn btn-sm btn-outline-light">
+                                                Detalles
+                                            </Link>
+                                            <button
+                                                className={`btn btn-sm ${isFavorite ? "btn-warning" : "btn-outline-warning"}`}
+                                                onClick={() => {
+                                                    if (isFavorite) {
+                                                        dispatch({ type: "REMOVE_FAVORITE", payload: item.uid });
+                                                    } else {
+                                                        dispatch({ type: "ADD_FAVORITE", payload: item });
+                                                    }
+                                                }}
+                                            >
+                                                <i className={`${isFavorite ? "fa-solid" : "fa-regular"} fa-heart`}></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
-            </div>
-            <div className="col">
-                <div className="card">
-                    <img src="..." className="card-img-top" alt="..." />
-                    <div className="card-body">
-                        <h5 className="card-title">Card title</h5>
-                        <p className="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                    </div>
-                </div>
-            </div>
-            <div className="col">
-                <div className="card">
-                    <img src="..." className="card-img-top" alt="..." />
-                    <div className="card-body">
-                        <h5 className="card-title">Card title</h5>
-                        <p className="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                    </div>
-                </div>
-            </div>
-            <div className="col">
-                <div className="card">
-                    <img src="..." className="card-img-top" alt="..." />
-                    <div className="card-body">
-                        <h5 className="card-title">Card title</h5>
-                        <p className="card-text">This is a longer card with supporting text below as a natural lead-in to additional content.</p>
-                    </div>
-                </div>
-            </div>
-            <div className="col">
-                <div className="card">
-                    <img src="..." className="card-img-top" alt="..." />
-                    <div className="card-body">
-                        <h5 className="card-title">Card title</h5>
-                        <p className="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                    </div>
-                    
-                </div>
-            </div>
-        </div>
+            )}
         </div>
     );
-}; 
+};
