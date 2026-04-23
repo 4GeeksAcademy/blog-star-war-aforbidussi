@@ -11,11 +11,11 @@ export const Navbar = () => {
 
         <div className="flex-grow-1 d-none d-lg-block" style={{ flexBasis: 0 }}></div>
         <Link className="navbar-brand mx-auto d-flex justify-content-center" to="/" style={{ flexBasis: 0, flexGrow: 1 }}>
-          <img 
-    src={logoStarWars} 
-    alt="star wars" 
-    style={{ width: "250px", height: "auto" }} 
-/>
+          <img
+            src={logoStarWars}
+            alt="star wars"
+            style={{ width: "250px", height: "auto" }}
+          />
         </Link>
         <div className="d-flex justify-content-end flex-grow-1" style={{ flexBasis: 0 }}>
           <div className="dropdown">
@@ -33,7 +33,7 @@ export const Navbar = () => {
               ) : (
                 store.favorites.map(fav => (
                   <li key={fav.uid} className="d-flex justify-content-between align-items-center mb-2 border-bottom border-secondary pb-1">
-                    <Link to={`/personajes/${fav.uid}`} className="text-white text-decoration-none ms-2 small">
+                    <Link to={`/${fav.type}/${fav.uid}`} className="text-white text-decoration-none ms-2 small">
                       {fav.name}
                     </Link>
                     <i

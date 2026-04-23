@@ -16,7 +16,7 @@ export const Personajes = () => {
 
                 const personajesAdaptados = data.map(item => ({
                     ...item,
-                    uid: item.id.toString() 
+                    uid: item.id.toString()
                 }));
 
                 dispatch({
@@ -43,8 +43,7 @@ export const Personajes = () => {
                 <div className="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
                     {store.personajes.map(item => {
                         const imageUrl = item.image;
-                        const isFavorite = store.favorites.some(fav => fav.uid === item.uid);
-
+                        const isFavorite = store.favorites.some(fav => fav.uid === item.uid && fav.category === "personaje");
                         return (
                             <div key={item.uid} className="col d-flex justify-content-center">
                                 <div className="card bg-dark text-white border-secondary shadow-sm w-100" style={{ maxWidth: "18rem" }}>
@@ -57,7 +56,7 @@ export const Personajes = () => {
                                     />
                                     <div className="card-body d-flex flex-column">
                                         <h5 className="card-title text-warning">{item.name}</h5>
-                                        
+
                                         <div className="mt-auto d-flex justify-content-between">
                                             <Link to={`/personajes/${item.uid}`} className="btn btn-sm btn-outline-light">
                                                 Detalles
@@ -66,9 +65,15 @@ export const Personajes = () => {
                                                 className={`btn btn-sm ${isFavorite ? "btn-warning" : "btn-outline-warning"}`}
                                                 onClick={() => {
                                                     if (isFavorite) {
-                                                        dispatch({ type: "REMOVE_FAVORITE", payload: item.uid });
+                                                            dispatch({ 
+                                                            type: "REMOVE_FAVORITE", 
+                                                            payload: { uid: item.uid, category: "personaje" } 
+                                                        });
                                                     } else {
-                                                        dispatch({ type: "ADD_FAVORITE", payload: item });
+                                                        dispatch({ 
+                                                            type: "ADD_FAVORITE", 
+                                                            payload: { ...item, category: "personaje" } 
+                                                        });
                                                     }
                                                 }}
                                             >

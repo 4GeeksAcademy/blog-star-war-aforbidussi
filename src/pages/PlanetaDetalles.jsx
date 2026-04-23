@@ -9,20 +9,25 @@ export const PlanetaDetalle = () => {
     const cleanUid = uid.trim();
 
     useEffect(() => {
-        fetch(`https://raw.githubusercontent.com/tbone849/star-wars-guide/master/build/assets/img/planets/${cleanUid}`)
-            .then(res => res.json())
+        fetch(`https://swapi.info/api/planets/${cleanUid}`)
+            .then(res => {
+                if (!res.ok) throw new Error("Error en la red");
+                return res.json();
+            })
             .then(data => {
-                if (data.result) setDetalles(data.result.properties);
+                setDetalles(data);
             })
             .catch(err => console.error(err));
     }, [cleanUid]);
 
     if (!detalles) return <p className="text-white text-center mt-5">Cargando coordenadas espaciales...</p>;
 
+const imageURL = `/img/planetas/${cleanUid}.jpg`;
+
     return (
         <div className="container mt-5">
             <div className="mb-4">
-                <button 
+                <button
                     onClick={() => navigate("/planetas")}
                     className="btn btn-outline-warning"
                 >
@@ -34,19 +39,21 @@ export const PlanetaDetalle = () => {
             <div className="row bg-dark p-4 rounded shadow-lg border border-secondary">
                 <div className="col-md-6 d-flex align-items-center justify-content-center">
                     <img
-                        src={detalles.image}
+                        src={imageURL}
                         className="img-fluid rounded shadow"
                         alt={detalles.name}
                         style={{ maxHeight: "500px", objectFit: "cover" }}
                         onError={(e) => {
-                            e.target.src = "https://placehold.co/400x600/212529/ffe81f?text=Planeta+No+Disponible";
+                            console.warn("Imagen no encontrada, aplicando fallback");
+                            e.target.onerror = null;
+                            e.target.src = "https://placehold.co/600x400/212529/ffe81f?text=Not+Found";
                         }}
                     />
                 </div>
                 <div className="col-md-6 text-white p-4">
                     <h1 className="display-4 text-warning">{detalles.name}</h1>
                     <hr className="bg-warning" style={{ height: "2px" }} />
-            
+
                     <div className="mt-4 fs-5">
                         <p className="mb-3"><strong>Clima:</strong> {detalles.climate}</p>
                         <p className="mb-3"><strong>Terreno:</strong> {detalles.terrain}</p>

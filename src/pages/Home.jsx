@@ -1,12 +1,11 @@
-import { useState } from "react"; // Necesitamos estado local para el texto de búsqueda
+import { useState } from "react"; 
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { Link } from "react-router-dom";
 
 export const Home = () => {
     const { store } = useGlobalReducer();
-    const [busqueda, setBusqueda] = useState(""); // Estado para lo que el usuario escribe
+    const [busqueda, setBusqueda] = useState(""); 
 
-    // Filtramos en las tres categorías al mismo tiempo
     const personajesFiltrados = store.personajes?.filter(p => 
         p.name.toLowerCase().includes(busqueda.toLowerCase())
     ) || [];

@@ -16,7 +16,7 @@ export const Vehiculos = () => {
 
                 const vehiculosAdaptados = data.map(v => {
                     const id = v.url.split("/").filter(Boolean).pop();
-                    return { ...v, uid: id };
+                    return { ...v, uid: id, type: "vehiculos" };
                 });
 
                 dispatch({
@@ -44,14 +44,15 @@ export const Vehiculos = () => {
             ) : (
                 <div className="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
                     {store.vehiculos.map(item => {
-                        const imageUrl = `https://raw.githubusercontent.com/tbone849/star-wars-guide/master/build/assets/img/vehicles/${item.uid}.jpg`;
-                        const isFavorite = store.favorites.some(fav => fav.uid === item.uid);
+
+                        const imageURL = `/img/vehiculos/${item.uid}.jpg`;
+                        const isFavorite = store.favorites.some(fav => fav.uid === item.uid && fav.category === "vehiculos");
 
                         return (
                             <div key={item.uid} className="col d-flex justify-content-center">
                                 <div className="card bg-dark text-white border-secondary shadow-sm w-100" style={{ maxWidth: "18rem" }}>
                                     <img
-                                        src={imageUrl}
+                                        src={imageURL}
                                         className="card-img-top"
                                         alt={item.name}
                                         style={{ height: "300px", objectFit: "cover", objectPosition: "center" }}
@@ -69,9 +70,15 @@ export const Vehiculos = () => {
                                                 className={`btn btn-sm ${isFavorite ? "btn-warning" : "btn-outline-warning"}`}
                                                 onClick={() => {
                                                     if (isFavorite) {
-                                                        dispatch({ type: "REMOVE_FAVORITE", payload: item.uid });
+                                                        dispatch({
+                                                            type: "REMOVE_FAVORITE",
+                                                            payload: { uid: item.uid, category: "vehiculos" }
+                                                        });
                                                     } else {
-                                                        dispatch({ type: "ADD_FAVORITE", payload: item });
+                                                        dispatch({
+                                                            type: "ADD_FAVORITE",
+                                                            payload: { ...item, category: "vehiculos" }
+                                                        });
                                                     }
                                                 }}
                                             >

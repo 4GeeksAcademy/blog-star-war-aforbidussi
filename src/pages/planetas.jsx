@@ -16,7 +16,7 @@ export const Planetas = () => {
 
                 const planetasAdaptados = data.map(p => {
                     const id = p.url.split("/").filter(Boolean).pop();
-                    return { ...p, uid: id };
+                    return { ...p, uid: id, type: "planetas" };
                 });
 
                 dispatch({
@@ -24,7 +24,7 @@ export const Planetas = () => {
                     payload: planetasAdaptados
                 });
             } catch (error) {
-                console.error("Error:", error);
+                console.error("Error crítico en la petición:", error.message);
             }
         };
 
@@ -42,9 +42,8 @@ export const Planetas = () => {
             ) : (
                 <div className="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
                     {store.planetas.map(item => {
-                        const imageURL = `https://raw.githubusercontent.com/tbone849/star-wars-guide/master/build/assets/img/planets/${item.uid}.jpg`;
-                        const isFavorite = store.favorites.some(fav => fav.uid === item.uid);
-
+                        const imageURL = `/img/planetas/${item.uid}.jpg`;
+                        const isFavorite = store.favorites.some(fav => fav.uid === item.uid && fav.category === "planetas");
                         return (
                             <div key={item.uid} className="col d-flex justify-content-center">
                                 <div className="card bg-dark text-white border-secondary shadow-sm w-100" style={{ maxWidth: "18rem" }}>
@@ -67,9 +66,15 @@ export const Planetas = () => {
                                                 className={`btn btn-sm ${isFavorite ? "btn-warning" : "btn-outline-warning"}`}
                                                 onClick={() => {
                                                     if (isFavorite) {
-                                                        dispatch({ type: "REMOVE_FAVORITE", payload: item.uid });
+                                                        dispatch({
+                                                            type: "REMOVE_FAVORITE",
+                                                            payload: { uid: item.uid, category: "planetas" }
+                                                        });
                                                     } else {
-                                                        dispatch({ type: "ADD_FAVORITE", payload: item });
+                                                        dispatch({ 
+                                                            type: "ADD_FAVORITE", 
+                                                            payload: { ...item, category: "planetas" } 
+                                                        });
                                                     }
                                                 }}
                                             >
